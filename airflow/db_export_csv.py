@@ -70,9 +70,7 @@ def export_db_fn(**kwargs):
             s3_client.put_object(Bucket=S3_BUCKET, Key=outkey, Body=f.getvalue())
             print("table_name:"+table_name[3])
             ti.xcom_push(key=table_name[3], value=outkey)
-           
-           
-  
+             
  
 with DAG(dag_id="db_export_dag",schedule_interval='*/15 * * * *', catchup=False, start_date=days_ago(1),max_active_runs=1) as dag:
     export_db = PythonOperator(
