@@ -1,3 +1,5 @@
 # Introduction
 
-- Create directory mkdir -p layers/
+- Create directory `mkdir -p layers/`
+- 
+---
