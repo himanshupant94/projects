@@ -15,9 +15,6 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-
-#S3_BUCKET: define S3 bucket path
-
 from airflow import DAG, settings
  
 from airflow.operators.python import PythonOperator
@@ -38,16 +35,12 @@ from airflow.operators.dummy_operator import DummyOperator
 MAX_AGE_IN_DAYS = 180 
 S3_BUCKET = ''
 S3_KEY = 'mwaa_status/{0}/files/export/{1}.csv' 
-MWAA_ENV_NAME = 'mwaav2-v0'
-#S3_BUCKET = getenv("S3_BUCKET", "test-bucket")
-#S3_KEY = getenv("S3_KEY", "key")
+MWAA_ENV_NAME = 'prod-data-pipeline-v2'
 REDSHIFT_TABLE = getenv("REDSHIFT_TABLE", "dag_run")
 
 # Get Args
 ENV = get_env()
 s3config = get_s3config(ENV)
-#DATE_PART = datetime.now().strftime('%Y/%m/%d')
-copy_option="timeformat 'YYYY-MM-DD HH:MI:SS'"
 
 
 OBJECTS_TO_EXPORT = [
@@ -57,6 +50,7 @@ OBJECTS_TO_EXPORT = [
 ]
  
 def export_db_fn(**kwargs):
+    ti = kwargs['ti']
     session = settings.Session()
     print("session: ",str(session))
  
@@ -78,27 +72,56 @@ def export_db_fn(**kwargs):
             for y in allrows:
                 w.writerow(vars(y))
             outkey = S3_KEY.format(MWAA_ENV_NAME, name[6:])
+            print("outkey:" + outkey)
+            table_name=outkey.split(".",4)
             s3_client.put_object(Bucket=S3_BUCKET, Key=outkey, Body=f.getvalue())
+            print("table_name:"+table_name[3])
+            ti.xcom_push(key=table_name[3], value=outkey)
+           
+           
+  
  
-    return "OK"
- 
-with DAG(dag_id="db_export_dag", schedule_interval=None, catchup=False, start_date=days_ago(1)) as dag:
+with DAG(dag_id="db_export_dag",schedule_interval='*/30 * * * *', catchup=False, start_date=days_ago(1)) as dag:
     export_db = PythonOperator(
         task_id="export_db",
         python_callable=export_db_fn,
         provide_context=True     
     )
     
-transfer_s3_to_redshift = S3ToRedshiftOperator(
+dag_run_s3_to_redshift =  S3ToRedshiftOperator(
         s3_bucket=S3_BUCKET,
-        s3_key='mwaa_status/mwaav2-v0/files/export/airflow.models.dagrun.DagRun.csv',
+        s3_key="{{ti.xcom_pull(task_ids='export_db',key='DagRun')}}",
         schema="dw_stage",
-        table=REDSHIFT_TABLE,
+        table="dag_run",
         copy_options=['csv',"IGNOREHEADER 1"],
         redshift_conn_id='redshift',
-        autocommit=True,
-        task_id='transfer_s3_to_redshift',
-    )
+        truncate_table=True,
+        task_id='dag_run_s3_to_redshift',
+    ) 
+    
+    
+task_instance_s3_to_redshift =  S3ToRedshiftOperator(
+        s3_bucket=S3_BUCKET,
+        s3_key="{{ti.xcom_pull(task_ids='export_db',key='TaskInstance')}}",
+        schema="dw_stage",
+        table="task_instance",
+        copy_options=['csv',"IGNOREHEADER 1"],
+        redshift_conn_id='redshift',
+        truncate_table=True,
+        task_id='task_instance_s3_to_redshift',
+    ) 
+    
+    
+task_fail_s3_to_redshift =  S3ToRedshiftOperator(
+        s3_bucket=S3_BUCKET,
+        s3_key="{{ti.xcom_pull(task_ids='export_db',key='TaskFail')}}",
+        schema="dw_stage",
+        table="task_fail",
+        copy_options=['csv',"IGNOREHEADER 1"],
+        redshift_conn_id='redshift',
+        truncate_table=True,
+        task_id='task_fail_s3_to_redshift',
+    ) 
     
 start = DummyOperator(
     task_id='Start',
@@ -108,4 +131,6 @@ end = DummyOperator(
     dag=dag)
     
     
-start >> export_db >> transfer_s3_to_redshift >> end 
+start >> export_db >> dag_run_s3_to_redshift >> end
+export_db >> task_instance_s3_to_redshift >> end
+export_db >> task_fail_s3_to_redshift >> end 

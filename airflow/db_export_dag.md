@@ -4,7 +4,8 @@ It exports live run dag information from Airflow meta-database and load into csv
 
 ### Task to do:
 - Create ETL DAG in MWAA environment to export csv and load into redshift database
-- Use **S3ToRedshiftOperator** to load file into table
+- Use **S3ToRedshiftOperator** to load files into tables
+- Use **XCOM** to push and pull values from other task.
 - Used AWS documentation to export airflow dag details
 
 
