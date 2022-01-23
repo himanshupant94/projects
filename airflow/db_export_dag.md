@@ -8,6 +8,13 @@ It exports live run dag information from Airflow meta-database and load into csv
 - Use **XCOM** to push and pull values from other task.
 - Used AWS documentation to export airflow dag details: [Click here](https://docs.aws.amazon.com/mwaa/latest/userguide/samples-dag-run-info-to-csv.html)
 
+## **Simple DAG**
+  
+  
+![alt text](https://user-images.githubusercontent.com/10596429/150699091-74917180-882c-4c61-94c8-ad1b88fc83df.png)
+
+
+
 
 
 
