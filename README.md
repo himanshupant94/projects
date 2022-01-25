@@ -7,6 +7,8 @@ Repository for my Understanding.
 - Airflow DAG
 - Lambda Function
 - Databricks
+- Archival Process
+- JIRA Integration
 
 ---
 Contact himanshupnt0@gmail.com for further details
