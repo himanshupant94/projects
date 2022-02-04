@@ -8,7 +8,11 @@
 	`pip3 install ldap3 --target mysql-layer/python/lib/python3.8/site-packages`
 	
 	`pip3 install requests --target mysql-layer/python/lib/python3.8/site-packages`
-- `cd /c/Users/user/projects/projects/lambda/mysql-layer` and right click on folder **python** and zip it.
+- `cd /c/Users/user/projects/projects/lambda/mysql-layer` and right click on folder **python** and zip it 
+
+	**OR**
+			
+	Use 7z tool to make zip file : `cd /c/Users/user/projects/projects/lambda/mysql-layer/python` & `7z a mysql.zip ./*`
 - Rename python.zip folder as mysql.zip and upload zip while creating layer 
 - Use same python version3.8  while creating layer
 --- 
