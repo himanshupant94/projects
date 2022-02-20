@@ -14,6 +14,7 @@
 - Download chrome-headless.zip, It has slack, chrome driver and selenium modules.
 - Place zip file in S3 Bucket and create a layer with python3.7
 - Use python code to take screenshot of URL and save into /tmp/ directory 
+- Set 2 environment variables(SLACK_BOT_TOKEN,Channel_id) in AWS lambda 
 
 ### Steps to setup Slack App (Need SLACK_BOT_TOKEN)
 - Go to socket mode and turn **on** 
