@@ -4,7 +4,7 @@
 ## Pre-requisite:
 - Need to have python3
 - Need to have **SLACK_BOT_TOKEN** and **Channel_id** to push text/image in slack channel
-- `export SLACK_BOT_TOKEN=""xoxb-xxxxxxxxxx"` -> git bash
+- `export SLACK_BOT_TOKEN="xoxb-xxxxxxxxxx"` -> git bash
 - Run python script
 
 
