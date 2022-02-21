@@ -1,4 +1,4 @@
-
+#!/bin/bash
 RUNTIME=python3.7
 
 
@@ -6,12 +6,12 @@ SELENIUM_VER=3.141.0
 CHROME_BINARY_VER=v1.0.0-55 # based on Chromium 69.0.3497.81
 CHROMEDRIVER_VER=2.43       # supports Chrome v69-71
 
-OUT_DIR=/out/build/chrome_headless/python/lib/$RUNTIME/site-packages
+#mkdir -p out/build/chrome_headless/python/lib/$RUNTIME/site-packages
+OUT_DIR=out/build/chrome_headless/python/lib/$RUNTIME/site-packages
 
-docker run -v $(pwd):/out -it lambci/lambda:build-$RUNTIME \
-    pip install selenium==$SELENIUM_VER -t $OUT_DIR
+docker run -v $(pwd):/out -it lambci/lambda:build-$RUNTIME pip install selenium==$SELENIUM_VER --target $OUT_DIR
 
-cp chrome_headless.py build/chrome_headless/python/chrome_headless.py
+#cp chrome_headless.py out/build/chrome_headless/python/chrome_headless.py
 
 pushd build/chrome_headless
 

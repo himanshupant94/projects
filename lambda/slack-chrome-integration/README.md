@@ -23,6 +23,18 @@
 
 ![image](https://user-images.githubusercontent.com/10596429/154865755-e62de7cb-a1c7-40e2-8b4b-95ff1897d64b.png)
 
+
+### Use dockerfile for enhancement of your layering to upload in AWS Lambda(Work at every platform)
+- Use base image from dockerhub **lambci/lambda:python3.7**
+- Place dockerfile in your machine
+- Build Docker Image: `docker build -t IMAGE_NAME(slack-chrome-integration) -f dockerfile .`
+- Run `docker create -ti --name dummy IMAGE_NAME bash`  
+  **Example:**  `docker create -ti --name dummy slack-chrome-integration bash`
+- Run `docker cp dummy:/out/build/chrome_headless/ .`
+- Run `docker rm -f dummy`
+
+
+
 ### Reference:
 https://github.com/soumilshah1995/Selenium-on-AWS-Lambda-Python3.7
 

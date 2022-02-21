@@ -1,0 +1,38 @@
+
+FROM lambci/lambda:python3.7
+
+ENV SELENIUM_VER=3.141.0
+#based on Chromium 69.0.3497.81
+ENV CHROME_BINARY_VER=v1.0.0-55 
+# supports Chrome v69-71
+ENV CHROMEDRIVER_VER=2.43
+
+ENV RUNTIME=python3.7
+USER root
+SHELL ["/bin/bash", "-c"]
+RUN yum -y install zip unzip
+
+# Directory in container for project source files
+ENV OUT_DIR=/out/build/chrome_headless/python/lib/$RUNTIME/site-packages
+# Install Python dependencies
+
+RUN mkdir -p $OUT_DIR
+RUN pip install selenium==$SELENIUM_VER --target $OUT_DIR
+
+WORKDIR /out/build/chrome_headless
+
+ENV DRIVER_URL=https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VER/chromedriver_linux64.zip
+RUN curl -SL $DRIVER_URL >chromedriver.zip
+RUN dir
+RUN unzip chromedriver.zip
+RUN rm chromedriver.zip
+
+# download chrome binary
+ENV CHROME_URL=https://github.com/adieuadieu/serverless-chrome/releases/download/$CHROME_BINARY_VER/stable-headless-chromium-amazonlinux-2017-03.zip
+RUN curl -SL $CHROME_URL >headless-chromium.zip
+RUN unzip headless-chromium.zip
+RUN rm headless-chromium.zip
+RUN zip -r chrome_headless.zip *
+
+
+
