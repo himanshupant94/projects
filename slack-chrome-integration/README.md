@@ -12,7 +12,9 @@
 - Install pip module:
 
 	`pip install slack_sdk`
+	
 	`pip install selenium`
+	
 	`pip install webdriver_manager`
 
 
