@@ -61,7 +61,7 @@ def lambda_handler(event, context):
 		# Uploading files requires the `files:write` scope
 		result = client.files_upload(
 			channels=channel_id,
-			initial_comment="Ops-Analytics Job Status: <"+ URL +"+|Ops360 link>",
+			initial_comment="Ops-Analytics Job Status: <"+ URL +"|Ops360 link>",
 			file=file_name,
 		)
 		# Log the result
