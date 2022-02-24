@@ -21,6 +21,7 @@ docker -H localhost:2375 images
 docker -H localhost:2375 run hello-world
 echo "export DOCKER_HOST=localhost:2375" >> .bashrc
 source .bashrc
+sudo apt install python3-pip
 ```
 
 
