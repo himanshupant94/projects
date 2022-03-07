@@ -3,6 +3,7 @@ import psycopg2
 import psycopg2.extras
 import sys
 
+
 def lambda_handler(event, context):
   REDSHIFT_DATABASE = os.environ['REDSHIFT_DATABASE']
   REDSHIFT_USER = os.environ['REDSHIFT_USER']
@@ -22,9 +23,6 @@ def lambda_handler(event, context):
        AND DATEDIFF(day, pgci.relcreationtime, getdate()) > '30'\
        ORDER BY 5 DESC"\
 
-  a = os.listdir('/opt')
-  for x in a:
-    print(x)
   
   try:
     conn = psycopg2.connect(
@@ -39,12 +37,13 @@ def lambda_handler(event, context):
 
   try:
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #cursor=conn.cursor()
     cursor.execute(REDSHIFT_QUERY)
-    rows = cursor.fetchall()
-    for row in rows:
-      for col in row:
-        print ("%s," % col)
-      print("\n")
+    records = cursor.fetchall()
+    for row in records:
+      cursor.execute("""INSERT INTO dw_pii.retention_tables_hist(schema_name,table_name,table_owner,creation_date,daysold) VALUES (%s, %s, %s, %s, %s)""",row)
+      conn.commit()
+      
     cursor.close()
     conn.commit()
     conn.close()
