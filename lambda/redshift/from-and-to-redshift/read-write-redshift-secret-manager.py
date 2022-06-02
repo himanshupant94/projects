@@ -11,7 +11,10 @@ from botocore.exceptions import ClientError
 
 
 def lambda_handler(event, context):
-  secret=get_secret()
+  schema=os.environ.get('schema')
+  secret_id=os.environ.get('secret_id')
+  secret=get_secret(secret_id)
+
   
   REDSHIFT_QUERY = "SELECT TRIM(pgnsp.nspname) AS schema_name,\
        TRIM(pgci.relname) AS table_name,\
@@ -42,11 +45,11 @@ def lambda_handler(event, context):
   try:
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     #cursor=conn.cursor()
-    cursor.execute("truncate dw_pii.retention_tables_hist")
+    cursor.execute(f"truncate {schema}.retention_tables_hist")
     cursor.execute(REDSHIFT_QUERY)
     records = cursor.fetchall()
     for row in records:
-      cursor.execute("""INSERT INTO dw_pii.retention_tables_hist(schema_name,table_name,table_owner,creation_date,daysold) VALUES (%s, %s, %s, %s, %s)""",row)
+      cursor.execute(f"""INSERT INTO {schema}.retention_tables_hist(schema_name,table_name,table_owner,creation_date,daysold) VALUES (%s, %s, %s, %s, %s)""",row)
       conn.commit()
       
     cursor.close()
@@ -60,9 +63,9 @@ def lambda_handler(event, context):
 
 
 
-def get_secret():
+def get_secret(secret_id):
 
-    secret_name = "arn:aws:secretsmanager:us-east-1:530191758819:secret:/db/dwhops/dev/redshift/lambdauser-eui6mU"
+    secret_name = secret_id
     region_name = "us-east-1"
     print(secret_name)
 
