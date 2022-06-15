@@ -7,7 +7,7 @@ def main1(list1,sum):
     print(pairs)
     for i in pairs:
         #print(i)
-        print(set(i))
+        #print(set(i))
         if set(i).issubset(list1):
             print(i)
 

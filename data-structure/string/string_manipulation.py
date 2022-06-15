@@ -16,6 +16,12 @@ def main():
     else:
         print("Not found")
 
+   # Remove blank characters
+    print(string.replace(" ",""))
+   # Sort string
+    print(''.join(sorted(string)).strip())
+
+
 
 
 if __name__=="__main__":
