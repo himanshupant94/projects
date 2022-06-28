@@ -21,11 +21,6 @@ def reverse_string(str):
 
 
 
-
-
-
-
-
 if __name__=="__main__":
     str=" my name is himanshu pant "
     print(reverse_string(str))

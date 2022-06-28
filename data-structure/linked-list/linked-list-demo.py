@@ -14,8 +14,13 @@ if __name__=='__main__':
     llist.head=Node(1)
     second=Node(2)
     third=Node(3)
-    llist.head.next=second
-    print(llist)
+    llist.next=second
+    second.next=third
+
+    print(llist.head.data)
+    print(llist.next.data)
+    print(second.next.data)
+
 
 
 
