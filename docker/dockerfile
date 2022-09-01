@@ -1,0 +1,28 @@
+
+#FROM lambci/lambda:python3.8
+FROM amazonlinux
+
+ENV RUNTIME=python3.8
+USER root
+
+
+SHELL ["/bin/bash", "-c"]
+RUN yum install -y amazon-linux-extras
+RUN amazon-linux-extras enable python3.8
+RUN yum install -y python3.8
+RUN yum -y install gcc postgresql postgresql-devel python-devel python38 python38-devel findutils unzip zip python3-pip
+
+# Directory in container for project source files
+ENV OUT_DIR=/out/build/oracle/python/lib/$RUNTIME/site-package
+# Install Python dependencies
+
+RUN mkdir -p $OUT_DIR
+RUN pip3 install oracledb --target $OUT_DIR
+RUN echo $(python3.8 --version)
+RUN echo $(pip3.8 -V)
+WORKDIR /out/build/oracle
+
+RUN zip -r orcl_conn.zip *
+
+
+
